@@ -31,6 +31,10 @@ Unter [examples/tatort_dashboard.yaml](examples/tatort_dashboard.yaml) liegen di
 2. Ein Dashboard bearbeiten, **Karte hinzufügen → Manuell** auswählen und den Inhalt der YAML-Datei einfügen.
 3. Falls Home Assistant die Sensoren wegen bereits vorhandener YAML-Entitäten mit abweichenden Entity-IDs angelegt hat, die IDs in der Karte entsprechend anpassen.
 
+### Integrations-Icon
+
+Das eigene Icon liegt unter `custom_components/tatort/brand/` und wird von Home Assistant 2026.3 oder neuer direkt aus der Integration geladen. HACS kann in seiner Repository-Liste bis zu einer HACS-Korrektur weiterhin den Platzhalter zeigen ([offener HACS-Fehler](https://github.com/hacs/integration/issues/5171)).
+
 ## Migration der bestehenden YAML-Sensoren
 
 Zuerst die Integration testweise hinzufügen und die erzeugten Entity-IDs prüfen. Danach die bisherigen Tatort-REST-Sensoren aus der YAML-Konfiguration entfernen, damit keine doppelten Entitäten entstehen. Die Sensor-Namen und eindeutigen Kennungen entsprechen der bisherigen Konfiguration; Home Assistant kann bei schon registrierten REST-Entitäten dennoch Entity-IDs anpassen. Falls nötig, die Entity-IDs in **Einstellungen → Geräte & Dienste → Entitäten** angleichen, damit vorhandene Lovelace-Karten unverändert weiterlaufen.
