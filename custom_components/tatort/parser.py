@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import html as html_lib
 import re
+import unicodedata
 from typing import Any
 
 UNKNOWN = "unbekannt"
@@ -12,10 +13,31 @@ UNKNOWN = "unbekannt"
 
 def _clean(value: str) -> str:
     """Clean extracted text and trailing separators."""
+
+    # Decode HTML entities.
     value = html_lib.unescape(value)
+
+    # Remove HTML tags.
     value = re.sub(r"<[^>]+>", " ", value)
-    value = re.sub(r"\s+", " ", value)
-    return value.strip(" \t\r\n·•|-–")
+
+    # Remove invisible Unicode formatting characters.
+    value = "".join(
+        char
+        for char in value
+        if unicodedata.category(char) != "Cf"
+    )
+
+    # Normalize whitespace.
+    value = re.sub(r"\s+", " ", value).strip()
+
+    # Remove trailing punctuation and separators.
+    value = re.sub(
+        r"[\s·•∙⋅.\-|–—]+$",
+        "",
+        value,
+    )
+
+    return value.strip()
 
 
 def parse_page(html: str) -> dict[str, str]:
@@ -37,6 +59,7 @@ def parse_page(html: str) -> dict[str, str]:
         section,
         re.IGNORECASE,
     )
+
     if team_heading:
         city = _clean(team_heading.group(1))
 
@@ -47,6 +70,7 @@ def parse_page(html: str) -> dict[str, str]:
         section,
         re.IGNORECASE,
     )
+
     if title_match:
         title = _clean(
             title_match.group(1).split("Bild:", 1)[0]
@@ -54,6 +78,7 @@ def parse_page(html: str) -> dict[str, str]:
 
     # Extract the investigative team.
     investigator = UNKNOWN
+
     if city != UNKNOWN:
         team_match = re.search(
             r'([^"<>]{2,100})\s*·\s*'
@@ -62,6 +87,7 @@ def parse_page(html: str) -> dict[str, str]:
             section,
             re.IGNORECASE,
         )
+
         if team_match:
             investigator = _clean(team_match.group(1))
 
@@ -77,8 +103,8 @@ def parse_page(html: str) -> dict[str, str]:
         else UNKNOWN
     )
 
-    # Determine status using the existing detection logic.
-    # This is a display label, not a verified broadcast schedule.
+    # Existing status detection.
+    # This is not a verified broadcast schedule.
     available = "ermittelt Team" in section
 
     return {
@@ -99,6 +125,7 @@ def parse_image_url(payload: dict[str, Any]) -> str:
 
     try:
         images = payload["mediaCollection"]["embedded"]["meta"]["images"]
+
     except (KeyError, TypeError):
         images = None
 
@@ -107,12 +134,15 @@ def parse_image_url(payload: dict[str, Any]) -> str:
 
         if isinstance(first, dict):
             url = first.get("url")
+
             if isinstance(url, str) and url:
                 return url
 
             aspect = first.get("aspect16x9")
+
             if isinstance(aspect, dict):
                 src = aspect.get("src")
+
                 if isinstance(src, str) and src:
                     return src.replace("{width}", "1280")
 
