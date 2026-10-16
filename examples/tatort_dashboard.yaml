@@ -1,0 +1,24 @@
+type: vertical-stack
+cards:
+  - type: markdown
+    title: Sonntags-Tatort
+    content: |
+      {% set titel = states('sensor.tatort_titel') %}
+      {% set bild = states('sensor.tatort_bild_api') %}
+      # {{ titel if titel not in ['unknown', 'unavailable', 'unbekannt', ''] else 'Tatort' }}
+
+      {% if bild not in ['unknown', 'unavailable', 'unbekannt', ''] %}
+      ![Tatort-Vorschau]({{ bild }})
+      {% else %}
+      _Vorschaubild momentan nicht verfügbar._
+      {% endif %}
+  - type: entities
+    title: Folge
+    show_header_toggle: false
+    entities:
+      - entity: sensor.tatort_aktuell
+        name: Status
+      - entity: sensor.tatort_stadt
+        name: Stadt
+      - entity: sensor.tatort_ermittler
+        name: Ermittler
