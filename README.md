@@ -35,6 +35,18 @@ Unter [examples/tatort_dashboard.yaml](examples/tatort_dashboard.yaml) liegen di
 2. Ein Dashboard bearbeiten, **Karte hinzufügen → Manuell** auswählen und den Inhalt der YAML-Datei einfügen.
 3. Falls Home Assistant die Sensoren wegen bereits vorhandener YAML-Entitäten mit abweichenden Entity-IDs angelegt hat, die IDs in der Karte entsprechend anpassen.
 
+### Alternative: Kompakte Lovelace-Karte
+
+<img src="images/tatort-lovelace2.png" alt="Kompakte Tatort-Karte mit Vorschaubild links und Titel, Ort sowie Ermittlern rechts" width="400">
+
+Die zweite Variante zeigt das Vorschaubild links und Titel, Ort sowie Ermittler mit farbigen Symbolen direkt daneben. Beim Antippen öffnet sich die Bildvorschau als Popup.
+
+Die vollständige Konfiguration steht unter [examples/tatort_dashboard_compact.yaml](examples/tatort_dashboard_compact.yaml).
+
+**Voraussetzungen:** Die HACS-Frontend-Erweiterungen [Button Card](https://github.com/custom-cards/button-card) und [Browser Mod](https://github.com/thomasloven/hass-browser_mod) müssen installiert sein.
+
+Ein Dashboard bearbeiten, **Karte hinzufügen → Manuell** wählen und die YAML-Datei einfügen.
+
 ### Integrations-Icon
 
 Das eigene Icon liegt unter `custom_components/tatort/brand/` und wird von Home Assistant 2026.3 oder neuer direkt aus der Integration geladen. HACS kann in seiner Repository-Liste bis zu einer HACS-Korrektur weiterhin den Platzhalter zeigen ([offener HACS-Fehler](https://github.com/hacs/integration/issues/5171)).
