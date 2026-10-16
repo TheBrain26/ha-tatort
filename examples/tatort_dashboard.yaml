@@ -2,6 +2,9 @@ type: vertical-stack
 cards:
   - type: markdown
     title: Sonntags-Tatort
+    entity_id:
+      - sensor.tatort_titel
+      - sensor.tatort_bild_api
     content: |
       {% set titel = states('sensor.tatort_titel') %}
       {% set bild = states('sensor.tatort_bild_api') %}
@@ -22,3 +25,4 @@ cards:
         name: Stadt
       - entity: sensor.tatort_ermittler
         name: Ermittler
+
