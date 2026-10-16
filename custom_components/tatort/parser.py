@@ -30,9 +30,10 @@ def _clean(value: str) -> str:
     # Normalize whitespace.
     value = re.sub(r"\s+", " ", value).strip()
 
-    # Remove trailing punctuation and separators.
+    # Remove trailing punctuation and separators,
+    # including Katakana middle dot (U+30FB).
     value = re.sub(
-        r"[\s·•∙⋅.\-|–—]+$",
+        r"[\s·・•∙⋅.\-|–—]+$",
         "",
         value,
     )
