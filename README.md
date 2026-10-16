@@ -21,7 +21,7 @@ Die Integration ruft die Tatort-Seite und – sofern eine Folgen-ID gefunden wur
 
 Repository: [TheBrain26/ha-tatort](https://github.com/TheBrain26/ha-tatort).
 
-In HACS unter **⋮ → Benutzerdefinierte Repositories** die Adresse `https://github.com/TheBrain26/ha-tatort` mit dem Typ **Integration** hinzufügen. Danach in HACS nach **Tatort** suchen und installieren. Das Repository muss öffentlich sein, damit HACS darauf zugreifen kann.
+In HACS unter **⋮ → Benutzerdefinierte Repositories** die Adresse `https://github.com/TheBrain26/ha-tatort` mit dem Typ **Integration** hinzufügen. Danach in HACS nach **Tatort** suchen und installieren. Das Repository muss öffentlich sein, damit HACS darauf zugreifen kann. 
 
 ### Lovelace-Karte mit Bildvorschau
 
