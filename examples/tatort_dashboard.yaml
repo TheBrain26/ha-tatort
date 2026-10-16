@@ -1,26 +1,29 @@
-type: markdown
-title: Sonntags-Tatort
-entity_id:
-  - sensor.tatort_aktuell
-  - sensor.tatort_stadt
-  - sensor.tatort_titel
-  - sensor.tatort_ermittler
-  - sensor.tatort_bild_api
-content: |
-  {% set titel = states('sensor.tatort_titel') %}
-  {% set bild = states('sensor.tatort_bild_api') %}
-  {% set status = states('sensor.tatort_aktuell') %}
-  {% set stadt = states('sensor.tatort_stadt') %}
-  {% set ermittler = states('sensor.tatort_ermittler') %}
+type: custom:stack-in-card
+mode: vertical
+cards:
+  - type: markdown
+    title: Sonntags-Tatort
+    entity_id:
+      - sensor.tatort_titel
+      - sensor.tatort_bild_api
+    content: |
+      {% set titel = states('sensor.tatort_titel') %}
+      {% set bild = states('sensor.tatort_bild_api') %}
 
-  ## {{ titel if titel not in ['unknown', 'unavailable', 'unbekannt', ''] else 'Tatort' }}
+      # {{ titel if titel not in ['unknown', 'unavailable', 'unbekannt', ''] else 'Tatort' }}
 
-  {% if bild not in ['unknown', 'unavailable', 'unbekannt', ''] %}
-  ![Tatort-Vorschau]({{ bild }})
-  {% else %}
-  _Vorschaubild momentan nicht verfügbar._
-  {% endif %}
-
-  - **Status:** {% if status == 'verfuegbar' %}Verfügbar{% elif status == 'kein_tatort' %}Kein aktueller Tatort{% else %}Nicht verfügbar{% endif %}
-  - **Stadt:** {{ stadt if stadt not in ['unknown', 'unavailable', 'unbekannt', ''] else 'Nicht verfügbar' }}
-  - **Ermittler:** {{ ermittler if ermittler not in ['unknown', 'unavailable', 'unbekannt', ''] else 'Nicht verfügbar' }}
+      {% if bild not in ['unknown', 'unavailable', 'unbekannt', ''] %}
+      ![Tatort-Vorschau]({{ bild }})
+      {% else %}
+      _Vorschaubild momentan nicht verfügbar._
+      {% endif %}
+  - type: entities
+    title: null
+    show_header_toggle: false
+    entities:
+      - entity: sensor.tatort_aktuell
+        name: Status
+      - entity: sensor.tatort_stadt
+        name: Stadt
+      - entity: sensor.tatort_ermittler
+        name: Ermittler
