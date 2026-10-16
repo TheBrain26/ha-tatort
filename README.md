@@ -25,7 +25,7 @@ In HACS unter **⋮ → Benutzerdefinierte Repositories** die Adresse `https://g
 
 ### Lovelace-Karte mit Bildvorschau
 
-Unter [examples/tatort_dashboard.yaml](examples/tatort_dashboard.yaml) liegt eine Karte mit dynamischer ARD-Bildvorschau, Titel, Stadt, Ermittler und Verfügbarkeitsstatus. Sie verwendet nur eingebaute Home-Assistant-Karten und benötigt keine Zusatz-Plugins.
+Unter [examples/tatort_dashboard.yaml](examples/tatort_dashboard.yaml) liegt eine einzelne Markdown-Karte mit dynamischer ARD-Bildvorschau, Titel, Stadt, Ermittler und Verfügbarkeitsstatus. Sie verwendet nur eingebaute Home-Assistant-Karten und benötigt keine Zusatz-Plugins.
 
 Zum Einfügen ein Dashboard bearbeiten, **Karte hinzufügen → Manuell** auswählen und den Inhalt der YAML-Datei einfügen. Falls Home Assistant die Sensoren wegen bereits vorhandener YAML-Entitäten mit abweichenden Entity-IDs angelegt hat, die IDs in der Karte entsprechend anpassen.
 
