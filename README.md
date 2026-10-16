@@ -25,9 +25,11 @@ In HACS unter **⋮ → Benutzerdefinierte Repositories** die Adresse `https://g
 
 ### Lovelace-Karte mit Bildvorschau
 
-Unter [examples/tatort_dashboard.yaml](examples/tatort_dashboard.yaml) liegt eine einzelne Markdown-Karte mit dynamischer ARD-Bildvorschau, Titel, Stadt, Ermittler und Verfügbarkeitsstatus. Sie verwendet nur eingebaute Home-Assistant-Karten und benötigt keine Zusatz-Plugins.
+Unter [examples/tatort_dashboard.yaml](examples/tatort_dashboard.yaml) liegen die Markdown-Vorschau und deine Entitätenkarte in einem gemeinsamen Kartenrahmen. Beide Karteninhalte bleiben erhalten; die Trennfuge dazwischen entfällt. Dafür wird die Lovelace-Karte **Stack In Card** benötigt (Home Assistant 2025.1 oder neuer).
 
-Zum Einfügen ein Dashboard bearbeiten, **Karte hinzufügen → Manuell** auswählen und den Inhalt der YAML-Datei einfügen. Falls Home Assistant die Sensoren wegen bereits vorhandener YAML-Entitäten mit abweichenden Entity-IDs angelegt hat, die IDs in der Karte entsprechend anpassen.
+1. In HACS unter **Frontend → ⋮ → Benutzerdefinierte Repositories** `https://github.com/duczz/ha-stack-in-card` als **Lovelace** hinzufügen und **Stack In Card** installieren.
+2. Ein Dashboard bearbeiten, **Karte hinzufügen → Manuell** auswählen und den Inhalt der YAML-Datei einfügen.
+3. Falls Home Assistant die Sensoren wegen bereits vorhandener YAML-Entitäten mit abweichenden Entity-IDs angelegt hat, die IDs in der Karte entsprechend anpassen.
 
 ## Migration der bestehenden YAML-Sensoren
 
