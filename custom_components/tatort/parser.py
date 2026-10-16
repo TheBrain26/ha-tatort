@@ -11,18 +11,17 @@ UNKNOWN = "unbekannt"
 
 
 def _clean(value: str) -> str:
-    """Clean extracted text."""
+    """Clean extracted text and trailing separators."""
     value = html_lib.unescape(value)
     value = re.sub(r"<[^>]+>", " ", value)
     value = re.sub(r"\s+", " ", value)
-    return value.strip(" \t\r\n·|-–")
+    return value.strip(" \t\r\n·•|-–")
 
 
 def parse_page(html: str) -> dict[str, str]:
     """Extract information about the featured Tatort."""
 
-    # Read the introductory section rather than the complete
-    # list of historical episodes and investigative teams.
+    # Limit parsing to the featured section.
     section = re.split(
         r"Tatort-Erstausstrahlungen|Alle Tatort-Teams",
         html,
@@ -34,7 +33,7 @@ def parse_page(html: str) -> dict[str, str]:
     city = UNKNOWN
     team_heading = re.search(
         r"(?:ermittelt(?:\s+erneut)?\s+Team)\s+"
-        r"([^<\"\\]{2,70})",
+        r'([^<"\\]{2,70})',
         section,
         re.IGNORECASE,
     )
@@ -44,7 +43,7 @@ def parse_page(html: str) -> dict[str, str]:
     # Extract the episode title.
     title = UNKNOWN
     title_match = re.search(
-        r"Tatort:\s*([^\"<]+)",
+        r'Tatort:\s*([^"<]+)',
         section,
         re.IGNORECASE,
     )
@@ -53,13 +52,13 @@ def parse_page(html: str) -> dict[str, str]:
             title_match.group(1).split("Bild:", 1)[0]
         )
 
-    # Extract the investigative team near the featured city.
+    # Extract the investigative team.
     investigator = UNKNOWN
     if city != UNKNOWN:
         team_match = re.search(
-            r"([^\"<>]{2,100})\s*·\s*"
+            r'([^"<>]{2,100})\s*·\s*'
             + re.escape(city)
-            + r"(?=[\"<]|$)",
+            + r'(?=["<]|$)',
             section,
             re.IGNORECASE,
         )
@@ -68,7 +67,7 @@ def parse_page(html: str) -> dict[str, str]:
 
     # Extract the episode identifier.
     episode_match = re.search(
-        r"/video/tatort/[^\"/]+/[^\"/]+/([^\"?/]+)",
+        r'/video/tatort/[^"/]+/[^"/]+/([^"?/]+)',
         section,
     )
 
@@ -78,13 +77,15 @@ def parse_page(html: str) -> dict[str, str]:
         else UNKNOWN
     )
 
-    # A featured episode is not the same as a currently
-    # available stream. Keep the existing status values.
+    # Determine status using the existing detection logic.
+    # This is a display label, not a verified broadcast schedule.
     available = "ermittelt Team" in section
 
     return {
         "aktuell": (
-            "verfuegbar" if available else "kein_tatort"
+            "Sonntag Tatort"
+            if available
+            else "Sonntag kein Tatort"
         ),
         "stadt": city,
         "titel": title,
