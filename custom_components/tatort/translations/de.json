@@ -1,0 +1,13 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Tatort",
+        "description": "Ruft Tatort-Informationen aus der ARD-Mediathek ab."
+      }
+    },
+    "abort": {
+      "already_configured": "Tatort ist bereits eingerichtet."
+    }
+  }
+}
