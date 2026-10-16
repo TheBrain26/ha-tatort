@@ -1,3 +1,4 @@
+
 """Sensor platform for Tatort."""
 
 from __future__ import annotations
@@ -25,42 +26,36 @@ SENSORS: tuple[TatortSensorDescription, ...] = (
     TatortSensorDescription(
         key="aktuell",
         name="Tatort Aktuell",
-        unique_id="tatort_aktuell",
         icon="mdi:pistol",
         data_key="aktuell",
     ),
     TatortSensorDescription(
         key="stadt",
         name="Tatort Stadt",
-        unique_id="tatort_stadt",
         icon="mdi:map-marker",
         data_key="stadt",
     ),
     TatortSensorDescription(
         key="titel",
         name="Tatort Titel",
-        unique_id="tatort_titel",
         icon="mdi:movie-open",
         data_key="titel",
     ),
     TatortSensorDescription(
         key="ermittler",
         name="Tatort Ermittler",
-        unique_id="tatort_ermittler",
         icon="mdi:account-search",
         data_key="ermittler",
     ),
     TatortSensorDescription(
         key="folgen_id",
         name="Tatort Folgen ID",
-        unique_id="tatort_folgen_id",
         icon="mdi:identifier",
         data_key="folgen_id",
     ),
     TatortSensorDescription(
         key="bild_api",
         name="Tatort Bild API",
-        unique_id="tatort_bild_api",
         icon="mdi:image",
         data_key="bild_api",
     ),
@@ -74,7 +69,10 @@ async def async_setup_entry(
 ) -> None:
     """Set up Tatort sensors."""
     coordinator: TatortCoordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities(TatortSensor(coordinator, description) for description in SENSORS)
+    async_add_entities(
+        TatortSensor(coordinator, description)
+        for description in SENSORS
+    )
 
 
 class TatortSensor(CoordinatorEntity[TatortCoordinator], SensorEntity):
@@ -90,9 +88,12 @@ class TatortSensor(CoordinatorEntity[TatortCoordinator], SensorEntity):
     ) -> None:
         super().__init__(coordinator)
         self.entity_description = description
-        self._attr_unique_id = description.unique_id
+        self._attr_unique_id = f"tatort_{description.key}"
 
     @property
     def native_value(self) -> str:
         """Return the sensor value."""
-        return self.coordinator.data.get(self.entity_description.data_key, "unbekannt")
+        return self.coordinator.data.get(
+            self.entity_description.data_key,
+            "unbekannt",
+        )
