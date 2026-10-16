@@ -4,7 +4,7 @@ Eine kleine Custom Integration für HACS, die die bisherige Tatort-REST-Konfigur
 
 ## Entitäten
 
-- `sensor.tatort_aktuell` – `verfuegbar` oder `kein_tatort`
+- `sensor.tatort_aktuell` – `Sonntag Tatort` oder `Sonntag kein Tatort`
 - `sensor.tatort_stadt`
 - `sensor.tatort_titel`
 - `sensor.tatort_ermittler`
@@ -24,6 +24,10 @@ Repository: [TheBrain26/ha-tatort](https://github.com/TheBrain26/ha-tatort).
 In HACS unter **⋮ → Benutzerdefinierte Repositories** die Adresse `https://github.com/TheBrain26/ha-tatort` mit dem Typ **Integration** hinzufügen. Danach in HACS nach **Tatort** suchen und installieren. Das Repository muss öffentlich sein, damit HACS darauf zugreifen kann.
 
 ### Lovelace-Karte mit Bildvorschau
+
+#### Vorschau
+
+<img src="images/tatort-lovelace.png" alt="Tatort Lovelace-Dashboard mit Titel, Vorschaubild, Status, Stadt und Ermittlern" width="400">
 
 Unter [examples/tatort_dashboard.yaml](examples/tatort_dashboard.yaml) liegen die Markdown-Vorschau und deine Entitätenkarte in einem gemeinsamen Kartenrahmen. Beide Karteninhalte bleiben erhalten; die Trennfuge dazwischen entfällt. Dafür wird die Lovelace-Karte **Stack In Card** benötigt (Home Assistant 2025.1 oder neuer).
 
