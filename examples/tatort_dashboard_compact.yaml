@@ -1,0 +1,102 @@
+type: custom:button-card
+entity: sensor.tatort_titel
+show_name: false
+show_icon: false
+show_state: false
+triggers_update:
+  - sensor.tatort_titel
+  - sensor.tatort_bild_api
+  - sensor.tatort_stadt
+  - sensor.tatort_ermittler
+custom_fields:
+  content: |
+    [[[
+      const get = id => states[id]?.state ?? 'unbekannt';
+      const invalid = ['unknown', 'unavailable', 'unbekannt', ''];
+      const clean = value => invalid.includes(value) ? '–' : value;
+      const safe = value => String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+      const titel = safe(clean(get('sensor.tatort_titel')));
+      const bild = get('sensor.tatort_bild_api');
+      const stadt = safe(clean(get('sensor.tatort_stadt')));
+      const team = safe(clean(get('sensor.tatort_ermittler')));
+      const icon = (name, color) =>
+        '<ha-icon icon="' + name + '" style="' +
+        '--mdc-icon-size:18px;color:' + color + ';' +
+        'width:18px;height:18px;flex-shrink:0;"></ha-icon>';
+      const bildHtml = invalid.includes(bild)
+        ? ''
+        : '<img src="' + safe(bild) + '" style="' +
+          'width:145px;height:85px;object-fit:cover;' +
+          'border-radius:8px;flex-shrink:0;">';
+      const line = (symbol, color, value, bold) =>
+        '<div style="display:flex;align-items:center;' +
+        'justify-content:flex-start;gap:4px;' +
+        'text-align:left;white-space:nowrap;">' +
+        icon(symbol, color) +
+        '<span style="font-size:' + (bold ? '15px' : '13px') +
+        ';font-weight:' + (bold ? '600' : '400') +
+        ';text-align:left;display:inline-block;">' +
+        value + '</span></div>';
+      return `
+        <div style="
+          display:flex;
+          align-items:center;
+          justify-content:flex-start;
+          gap:12px;
+          width:100%;
+          text-align:left;
+        ">
+          ${bildHtml}
+          <div style="
+            display:flex;
+            flex-direction:column;
+            align-items:flex-start;
+            justify-content:center;
+            gap:6px;
+            min-width:0;
+            text-align:left;
+          ">
+            ${line('mdi:pistol', '#757575', titel, true)}
+            ${line('mdi:map-marker', '#f44336', stadt, false)}
+            ${line('mdi:account-search', '#2196f3', team, false)}
+          </div>
+        </div>
+      `;
+    ]]]
+styles:
+  card:
+    - padding: 12px
+    - max-width: 650px
+    - margin: 0 auto
+    - border-radius: 12px
+  grid:
+    - grid-template-areas: '"content"'
+    - grid-template-columns: 1fr
+    - grid-template-rows: auto
+  custom_fields:
+    content:
+      - width: 100%
+      - justify-self: stretch
+      - text-align: left
+tap_action:
+  action: fire-dom-event
+  browser_mod:
+    service: browser_mod.popup
+    data:
+      title: Tatort-Vorschau
+      size: normal
+      content:
+        type: markdown
+        content: >-
+          {% set bild = states('sensor.tatort_bild_api') %}
+          {% if bild not in ['unknown', 'unavailable', 'unbekannt', ''] %}
+          ![Tatort-Vorschau]({{ bild }})
+          {% endif %}
+grid_options:
+  columns: 12
+  rows: auto
