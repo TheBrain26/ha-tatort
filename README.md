@@ -2,12 +2,6 @@
 
 Eine kleine Custom Integration für HACS, die die bisherige Tatort-REST-Konfiguration als Integration in Home Assistant bereitstellt.
 
-## Neu in Version 0.1.6
-
-- Neuer Sensor `sensor.tatort_hinweis` mit `Letzter Tatort` oder `Nächster Tatort`, abhängig vom ARD-Ausstrahlungsdatum des hervorgehobenen Beitrags.
-- Wenn die ARD kein Ausstrahlungsdatum liefert, zeigt der Sensor vorsichtshalber `Letzter Tatort` an.
-- Beide Dashboard-Beispiele enthalten den neuen Hinweis. In bestehenden Dashboards muss der Sensor bei Bedarf manuell ergänzt werden.
-
 ## Entitäten
 
 - `sensor.tatort_aktuell` – `Sonntag Tatort` oder `Sonntag kein Tatort`
@@ -36,7 +30,7 @@ In HACS unter **⋮ → Benutzerdefinierte Repositories** die Adresse `https://g
 
 <img src="images/tatort-lovelace.png" alt="Tatort Lovelace-Dashboard mit Titel, Vorschaubild, Status, Stadt und Ermittlern" width="400">
 
-Unter [examples/tatort_dashboard.yaml](examples/tatort_dashboard.yaml) liegen die Markdown-Vorschau und deine Entitätenkarte in einem gemeinsamen Kartenrahmen. Beide Karteninhalte bleiben erhalten; die Trennfuge dazwischen entfällt. Dafür wird die Lovelace-Karte **Stack In Card** benötigt (Home Assistant 2025.1 oder neuer).
+Unter [examples/tatort_dashboard.yaml](examples/tatort_dashboard.yaml) liegen die Markdown-Vorschau und deine Entitätenkarte in einem gemeinsamen Kartenrahmen. Beide Karteninhalte bleiben erhalten; die Trennfuge dazwischen entfällt. Dafür wird die Lovelace-Karte **Stack In Card** benötigt (Home Assistant 2025.1 oder neuer). Das Beispiel enthält auch den Hinweis `sensor.tatort_hinweis`. In einem bereits bestehenden Dashboard muss diese Entität bei Bedarf manuell ergänzt werden.
 
 1. In HACS unter **Frontend → ⋮ → Benutzerdefinierte Repositories** `https://github.com/duczz/ha-stack-in-card` als **Lovelace** hinzufügen und **Stack In Card** installieren.
 2. Ein Dashboard bearbeiten, **Karte hinzufügen → Manuell** auswählen und den Inhalt der YAML-Datei einfügen.
@@ -48,7 +42,7 @@ Unter [examples/tatort_dashboard.yaml](examples/tatort_dashboard.yaml) liegen di
 
 Die zweite Variante zeigt das Vorschaubild links und Titel, Ort sowie Ermittler mit farbigen Symbolen direkt daneben. Beim Antippen öffnet sich die Bildvorschau als Popup.
 
-Die vollständige Konfiguration steht unter [examples/tatort_dashboard_compact.yaml](examples/tatort_dashboard_compact.yaml).
+Die vollständige Konfiguration steht unter [examples/tatort_dashboard_compact.yaml](examples/tatort_dashboard_compact.yaml). Auch diese Karte zeigt `sensor.tatort_hinweis`; in einer bestehenden Karte muss die Entität bei Bedarf manuell ergänzt werden.
 
 **Voraussetzungen:** Die HACS-Frontend-Erweiterungen [Button Card](https://github.com/custom-cards/button-card) und [Browser Mod](https://github.com/thomasloven/hass-browser_mod) müssen installiert sein.
 
