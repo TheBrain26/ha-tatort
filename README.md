@@ -2,6 +2,12 @@
 
 Eine kleine Custom Integration für HACS, die die bisherige Tatort-REST-Konfiguration als Integration in Home Assistant bereitstellt.
 
+## Neu in Version 0.1.6
+
+- Neuer Sensor `sensor.tatort_hinweis` mit `Letzter Tatort` oder `Nächster Tatort`, abhängig vom ARD-Ausstrahlungsdatum des hervorgehobenen Beitrags.
+- Wenn die ARD kein Ausstrahlungsdatum liefert, zeigt der Sensor vorsichtshalber `Letzter Tatort` an.
+- Beide Dashboard-Beispiele enthalten den neuen Hinweis. In bestehenden Dashboards muss der Sensor bei Bedarf manuell ergänzt werden.
+
 ## Entitäten
 
 - `sensor.tatort_aktuell` – `Sonntag Tatort` oder `Sonntag kein Tatort`
