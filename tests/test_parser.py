@@ -1,5 +1,6 @@
 """Tests for the standalone Tatort parsing helpers."""
 
+from datetime import date
 import importlib.util
 from pathlib import Path
 import unittest
@@ -39,7 +40,7 @@ class TatortParserTests(unittest.TestCase):
             }
         }
         self.assertEqual(
-            parser.episode_hint(payload, today=__import__("datetime").date(2026, 10, 20)),
+            parser.episode_hint(payload, today=date(2026, 10, 20)),
             "Nächster Tatort",
         )
 
