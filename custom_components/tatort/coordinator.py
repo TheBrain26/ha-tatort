@@ -10,9 +10,10 @@ from typing import Any
 import aiohttp
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.util import dt as dt_util
 
 from .const import ARD_ASSET_URL, DOMAIN, REQUEST_TIMEOUT, TATORT_PAGE_URL
-from .parser import UNKNOWN, parse_image_url, parse_page
+from .parser import UNKNOWN, episode_hint, parse_image_url, parse_page
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -36,7 +37,7 @@ class TatortCoordinator(DataUpdateCoordinator[dict[str, str]]):
         self._session = session
 
     async def _async_update_data(self) -> dict[str, str]:
-        """Fetch the listing page, then its image metadata when available."""
+        """Fetch the listing page, then its image and broadcast metadata."""
         timeout = aiohttp.ClientTimeout(total=REQUEST_TIMEOUT)
         try:
             async with self._session.get(TATORT_PAGE_URL, timeout=timeout) as response:
@@ -57,7 +58,8 @@ class TatortCoordinator(DataUpdateCoordinator[dict[str, str]]):
                 response.raise_for_status()
                 payload: dict[str, Any] = await response.json(content_type=None)
             data["bild_api"] = parse_image_url(payload)
+            data["hinweis"] = episode_hint(payload, dt_util.now().date())
         except (aiohttp.ClientError, asyncio.TimeoutError, ValueError) as err:
-            _LOGGER.warning("Could not fetch the Tatort preview image: %s", err)
+            _LOGGER.warning("Could not fetch the Tatort preview metadata: %s", err)
             data["bild_api"] = UNKNOWN
         return data

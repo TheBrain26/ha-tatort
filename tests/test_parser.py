@@ -1,5 +1,6 @@
 """Tests for the standalone Tatort parsing helpers."""
 
+from datetime import date
 import importlib.util
 from pathlib import Path
 import unittest
@@ -20,7 +21,7 @@ class TatortParserTests(unittest.TestCase):
             'ermittelt Team Frankfurt · <span>Anna Beispiel · Frankfurt</span>'
         )
         data = parser.parse_page(html)
-        self.assertEqual(data["aktuell"], "verfuegbar")
+        self.assertEqual(data["aktuell"], "Sonntag Tatort")
         self.assertEqual(data["stadt"], "Frankfurt")
         self.assertEqual(data["titel"], "Der Testfall (2026)")
         self.assertEqual(data["ermittler"], "Anna Beispiel")
@@ -28,9 +29,33 @@ class TatortParserTests(unittest.TestCase):
 
     def test_parse_page_handles_missing_tatort(self):
         data = parser.parse_page("Keine aktuelle Tatort-Folge")
-        self.assertEqual(data["aktuell"], "kein_tatort")
+        self.assertEqual(data["aktuell"], "Sonntag kein Tatort")
         self.assertEqual(data["stadt"], "unbekannt")
         self.assertEqual(data["folgen_id"], "unbekannt")
+
+    def test_episode_hint_uses_future_broadcast_date(self):
+        payload = {
+            "teaser": {
+                "broadcastedOn": "2026-10-25T18:15:00Z",
+            }
+        }
+        self.assertEqual(
+            parser.episode_hint(payload, today=date(2026, 10, 20)),
+            "Nächster Tatort",
+        )
+
+    def test_episode_hint_falls_back_to_last_for_past_or_missing_date(self):
+        self.assertEqual(
+            parser.episode_hint(
+                {"broadcastedOn": "2026-10-18T18:15:00Z"},
+                today=__import__("datetime").date(2026, 10, 20),
+            ),
+            "Letzter Tatort",
+        )
+        self.assertEqual(
+            parser.episode_hint({}, today=__import__("datetime").date(2026, 10, 20)),
+            "Letzter Tatort",
+        )
 
     def test_parse_image_url(self):
         payload = {

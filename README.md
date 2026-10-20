@@ -5,13 +5,14 @@ Eine kleine Custom Integration für HACS, die die bisherige Tatort-REST-Konfigur
 ## Entitäten
 
 - `sensor.tatort_aktuell` – `Sonntag Tatort` oder `Sonntag kein Tatort`
+- `sensor.tatort_hinweis` – `Letzter Tatort` oder `Nächster Tatort`, anhand des ARD-Ausstrahlungsdatums des hervorgehobenen Beitrags
 - `sensor.tatort_stadt`
 - `sensor.tatort_titel`
 - `sensor.tatort_ermittler`
 - `sensor.tatort_folgen_id`
 - `sensor.tatort_bild_api` – Bild-URL für die bestehende Lovelace-Karte
 
-Die Integration ruft die Tatort-Seite und – sofern eine Folgen-ID gefunden wurde – die zugehörigen ARD-Mediathek-Metadaten alle 12 Stunden ab. Die ARD-Mediathek-API ist nicht als öffentliche, stabile API zugesichert. Änderungen an der ARD-Seite oder API können Anpassungen erforderlich machen.
+Die Integration ruft die Tatort-Seite und – sofern eine Folgen-ID gefunden wurde – die zugehörigen ARD-Mediathek-Metadaten alle sechs Stunden ab. Der Hinweis `Nächster Tatort` erscheint, wenn das ARD-Ausstrahlungsdatum des hervorgehobenen Beitrags heute oder in der Zukunft liegt; andernfalls lautet er `Letzter Tatort`. Falls die ARD kein Ausstrahlungsdatum liefert, wird vorsichtshalber `Letzter Tatort` angezeigt. Die ARD-Mediathek-API ist nicht als öffentliche, stabile API zugesichert. Änderungen an der ARD-Seite oder API können Anpassungen erforderlich machen.
 
 ## Installation zum Testen
 

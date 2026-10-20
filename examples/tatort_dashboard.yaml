@@ -6,11 +6,14 @@ cards:
     entity_id:
       - sensor.tatort_titel
       - sensor.tatort_bild_api
+      - sensor.tatort_hinweis
     content: |
       {% set titel = states('sensor.tatort_titel') %}
       {% set bild = states('sensor.tatort_bild_api') %}
 
       # {{ titel if titel not in ['unknown', 'unavailable', 'unbekannt', ''] else 'Tatort' }}
+
+      **{{ states('sensor.tatort_hinweis') }}**
 
       {% if bild not in ['unknown', 'unavailable', 'unbekannt', ''] %}
       ![Tatort-Vorschau]({{ bild }})
@@ -21,6 +24,8 @@ cards:
     title: null
     show_header_toggle: false
     entities:
+      - entity: sensor.tatort_hinweis
+        name: Hinweis
       - entity: sensor.tatort_aktuell
         name: Status
       - entity: sensor.tatort_stadt

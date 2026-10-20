@@ -1,4 +1,3 @@
-
 """Sensor platform for Tatort."""
 
 from __future__ import annotations
@@ -28,6 +27,12 @@ SENSORS: tuple[TatortSensorDescription, ...] = (
         name="Tatort Aktuell",
         icon="mdi:pistol",
         data_key="aktuell",
+    ),
+    TatortSensorDescription(
+        key="hinweis",
+        name="Tatort Hinweis",
+        icon="mdi:calendar-clock",
+        data_key="hinweis",
     ),
     TatortSensorDescription(
         key="stadt",
