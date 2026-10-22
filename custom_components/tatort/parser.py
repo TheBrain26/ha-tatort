@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import date, datetime, timezone
 import html as html_lib
+from html.parser import HTMLParser
 import re
 import unicodedata
 from typing import Any
@@ -30,8 +31,50 @@ def _clean(value: str) -> str:
     return value.strip()
 
 
+class _PageText(HTMLParser):
+    """Collect rendered text and linked video titles, excluding scripts."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.parts = []
+        self.videos = []
+        self.hidden = 0
+        self.href = None
+        self.heading = False
+        self.title = []
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        if tag in {"script", "style"}:
+            self.hidden += 1
+        if tag == "a":
+            self.href = attrs.get("href", "")
+        if tag == "h3" and self.href:
+            self.heading = True
+            self.title = []
+
+    def handle_endtag(self, tag):
+        if tag in {"script", "style"}:
+            self.hidden = max(0, self.hidden - 1)
+        if tag == "h3" and self.heading:
+            self.videos.append((self.href, "".join(self.title)))
+            self.heading = False
+        if tag == "a":
+            self.href = None
+        if tag in {"h2", "h3", "div", "span", "a"}:
+            self.parts.append("\n")
+
+    def handle_data(self, value):
+        if not self.hidden:
+            self.parts.append(value)
+            if self.heading:
+                self.title.append(value)
+
+
 def parse_page(html: str) -> dict[str, str]:
     """Extract information about the featured Tatort."""
+
+    page = _PageText()
 
     section = re.split(
         r"Tatort-Erstausstrahlungen|Alle Tatort-Teams",
@@ -39,6 +82,8 @@ def parse_page(html: str) -> dict[str, str]:
         maxsplit=1,
         flags=re.IGNORECASE,
     )[0]
+
+    page.feed(section)
 
     city = UNKNOWN
     team_heading = re.search(
@@ -59,6 +104,15 @@ def parse_page(html: str) -> dict[str, str]:
     if title_match:
         title = _clean(title_match.group(1).split("Bild:", 1)[0])
 
+    # Modern ARD cards use h3 titles, including "Trailer: Tatort - ...".
+    for href, card_title in page.videos:
+        if href and "/video/tatort/" in href:
+            title = _clean(re.sub(
+                r"^(?:Trailer:\s*)?Tatort\s*[:–—-]\s*",
+                "", card_title, flags=re.IGNORECASE,
+            ))
+            break
+
     investigator = UNKNOWN
     if city != UNKNOWN:
         team_match = re.search(
@@ -71,6 +125,19 @@ def parse_page(html: str) -> dict[str, str]:
         if team_match:
             investigator = _clean(team_match.group(1))
 
+    if investigator == UNKNOWN and city != UNKNOWN:
+        # The current team is listed under "Alle Tatort-Teams", outside
+        # the featured section. Match the exact city to avoid other teams.
+        full_page = _PageText()
+        full_page.feed(html)
+        text = "".join(full_page.parts)
+        team = re.search(
+            r"([^\n]{2,100}?)\s*·\s*" + re.escape(city) + r"\s*(?=\n|$)",
+            text, re.IGNORECASE,
+        )
+        if team:
+            investigator = _clean(team.group(1))
+
     episode_match = re.search(
         r'/video/tatort/[^"/]+/[^"/]+/([^"?/]+)',
         section,
@@ -81,7 +148,7 @@ def parse_page(html: str) -> dict[str, str]:
         else UNKNOWN
     )
 
-    available = "ermittelt Team" in section
+    available = team_heading is not None
 
     return {
         "aktuell": (
