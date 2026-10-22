@@ -83,6 +83,16 @@ class TatortCoordinator(DataUpdateCoordinator[dict[str, str]]):
             ) from err
 
         data = parse_page(html)
+        if (
+            data["folgen_id"] == UNKNOWN
+            and data["stadt"] == UNKNOWN
+            and "Tatort-Erstausstrahlungen" not in html
+            and "Alle Tatort-Teams" not in html
+        ):
+            if previous:
+                _LOGGER.warning("Unrecognized Tatort page; retaining previous data")
+                return dict(previous)
+            raise UpdateFailed("ARD returned an unrecognized Tatort page")
         asset_id = data["folgen_id"]
         if asset_id == UNKNOWN:
             data["bild_api"] = UNKNOWN

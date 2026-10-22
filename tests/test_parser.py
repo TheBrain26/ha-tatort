@@ -27,6 +27,36 @@ class TatortParserTests(unittest.TestCase):
         self.assertEqual(data["ermittler"], "Anna Beispiel")
         self.assertEqual(data["folgen_id"], "episode-123")
 
+    def test_modern_ard_trailer_and_team_directory(self):
+        html = (
+            '<h2>Am Sonntag ermittelt Team Franken</h2>'
+            '<a href="/video/tatort/trailer/br/episode-123">'
+            '<h3>Trailer: Tatort - Gottesgarten</h3></a>'
+            '<h2>Tatort-Erstausstrahlungen 2026</h2>'
+            '<h2>Alle Tatort-Teams</h2>'
+            '<h3>Andere Personen · Berlin</h3>'
+            '<h3>Rathgeber und Voss · Franken</h3>'
+        )
+        data = parser.parse_page(html)
+        self.assertEqual(data["titel"], "Gottesgarten")
+        self.assertEqual(data["ermittler"], "Rathgeber und Voss")
+        self.assertEqual(data["folgen_id"], "episode-123")
+
+    def test_heading_variants(self):
+        for heading in ("ermittelt erneut Team", "Ermittelt Team", "ermittelt  Team"):
+            with self.subTest(heading=heading):
+                data = parser.parse_page(f"<h2>{heading} Frankfurt</h2>")
+                self.assertEqual(data["aktuell"], "Sonntag Tatort")
+                self.assertEqual(data["stadt"], "Frankfurt")
+
+    def test_unrelated_video_does_not_supply_featured_title(self):
+        data = parser.parse_page(
+            '<h2>Am Sonntag ermittelt Team Frankfurt</h2>'
+            '<h2>Tatort-Erstausstrahlungen</h2>'
+            '<a href="/video/tatort/other/ard/id"><h3>Andere Folge</h3></a>'
+        )
+        self.assertEqual(data["titel"], "unbekannt")
+
     def test_parse_page_handles_missing_tatort(self):
         data = parser.parse_page("Keine aktuelle Tatort-Folge")
         self.assertEqual(data["aktuell"], "Sonntag kein Tatort")
