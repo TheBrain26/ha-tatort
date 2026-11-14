@@ -1,5 +1,13 @@
 # Release Notes
 
+## 1.1.0 – 14.11.2026
+
+- Neuer Sensor `sensor.tatort_erstausstrahlungsjahr` mit dem Jahr der Erstausstrahlung aus der Wikipedia-Folgenliste.
+- Beide Dashboard-Beispiele zeigen das Jahr an.
+- Bei fehlenden oder mehrdeutigen Titeln bleibt das Jahr `unbekannt`; Trailer- und Wiederholungsdaten werden nicht als Erstausstrahlung verwendet.
+
+Nach dem Update Home Assistant neu starten und die bestehende Dashboardkarte um den neuen Sensor ergänzen oder durch das aktualisierte Beispiel ersetzen.
+
 ## 1.0.0 – 02.11.2026
 
 - Erste stabile Version der Tatort-Integration.
