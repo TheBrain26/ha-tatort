@@ -87,6 +87,32 @@ class TatortParserTests(unittest.TestCase):
             "Letzter Tatort",
         )
 
+    def test_first_aired_year_matches_exact_title(self):
+        html = (
+            '<table><tr><td>1</td><td><a>Der Testfall</a></td>'
+            '<td>ARD</td><td>29. Nov. 1970</td></tr>'
+            '<tr><td>2</td><td>Ein anderer Testfall</td>'
+            '<td>ARD</td><td>2026</td></tr></table>'
+        )
+        self.assertEqual(parser.parse_first_aired_year(html, "Der Testfall (1970)"), "1970")
+        self.assertEqual(parser.parse_first_aired_year(html, "Testfall"), "unbekannt")
+
+    def test_first_aired_year_handles_markup_and_planned_dates(self):
+        html = (
+            '<tr><td>1346</td><td>Narrentanz<sup>[1]</sup></td>'
+            '<td>WDR</td><td>15.<span>&nbsp;</span>Nov. 2026</td></tr>'
+        )
+        self.assertEqual(parser.parse_first_aired_year(html, "Narrentanz"), "2026")
+
+    def test_first_aired_year_rejects_ambiguous_or_missing_dates(self):
+        row = '<tr><td>1</td><td>Der Testfall</td><td>ARD</td><td>{}</td></tr>'
+        self.assertEqual(
+            parser.parse_first_aired_year(row.format('1970') + row.format('2026'), "Der Testfall"),
+            "unbekannt",
+        )
+        for html in ('', row.format('unbekannt'), '<p>Trailer 2026</p>'):
+            self.assertEqual(parser.parse_first_aired_year(html, "Der Testfall"), "unbekannt")
+
     def test_parse_image_url(self):
         payload = {
             "mediaCollection": {

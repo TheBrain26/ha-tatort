@@ -8,6 +8,7 @@ triggers_update:
   - sensor.tatort_bild_api
   - sensor.tatort_stadt
   - sensor.tatort_ermittler
+  - sensor.tatort_erstausstrahlungsjahr
   - sensor.tatort_hinweis
 custom_fields:
   content: |
@@ -23,6 +24,7 @@ custom_fields:
         .replaceAll("'", '&#39;');
       const titel = safe(clean(get('sensor.tatort_titel')));
       const hinweis = safe(clean(get('sensor.tatort_hinweis')));
+      const jahr = safe(clean(get('sensor.tatort_erstausstrahlungsjahr')));
       const bild = get('sensor.tatort_bild_api');
       const stadt = safe(clean(get('sensor.tatort_stadt')));
       const team = safe(clean(get('sensor.tatort_ermittler')));
@@ -65,6 +67,7 @@ custom_fields:
           ">
             ${line('mdi:calendar-clock', '#757575', hinweis, false)}
             ${line('mdi:pistol', '#757575', titel, true)}
+            ${line('mdi:calendar', '#757575', 'Erstausstrahlung: ' + jahr, false)}
             ${line('mdi:map-marker', '#f44336', stadt, false)}
             ${line('mdi:account-search', '#2196f3', team, false)}
           </div>

@@ -249,3 +249,57 @@ def parse_image_url(payload: dict[str, Any]) -> str:
                     return src.replace("{width}", "1280")
 
     return UNKNOWN
+
+
+class _EpisodeTable(HTMLParser):
+    """Collect episode titles and first-air-date cells from Wikipedia rows."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.rows = []
+        self.cells = []
+        self.cell = None
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "tr":
+            self.cells = []
+        elif tag == "td":
+            self.cell = []
+
+    def handle_data(self, value):
+        if self.cell is not None:
+            self.cell.append(value)
+
+    def handle_endtag(self, tag):
+        if tag == "td" and self.cell is not None:
+            self.cells.append(_clean("".join(self.cell)))
+            self.cell = None
+        elif tag == "tr":
+            self.rows.append(self.cells)
+            self.cells = []
+
+
+def parse_first_aired_year(html: str, title: str) -> str:
+    """Match an exact episode title in the list of Tatort first broadcasts.
+
+    Never infer this year from a trailer, production year or repeat air date.
+    Ambiguous titles with different years deliberately remain unknown.
+    """
+    def normalized(value: str) -> str:
+        value = re.sub(r"\[\d+\]", "", value)
+        value = re.sub(r"\s*\(\d{4}\)\s*$", "", value)
+        return _clean(value).casefold()
+
+    if title in {UNKNOWN, ""}:
+        return UNKNOWN
+    table = _EpisodeTable()
+    table.feed(html)
+    years = set()
+    for cells in table.rows:
+        # Columns: episode number, title, broadcaster, first broadcast, ...
+        if len(cells) < 4 or normalized(cells[1]) != normalized(title):
+            continue
+        match = re.search(r"\b(?:19|20)\d{2}\b", cells[3])
+        if match:
+            years.add(match.group())
+    return next(iter(years)) if len(years) == 1 else UNKNOWN

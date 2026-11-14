@@ -12,8 +12,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.util import dt as dt_util
 
-from .const import ARD_ASSET_URL, DOMAIN, REQUEST_TIMEOUT, TATORT_PAGE_URL
-from .parser import UNKNOWN, episode_hint, parse_image_url, parse_page
+from .const import ARD_ASSET_URL, DOMAIN, EPISODE_LIST_URL, REQUEST_TIMEOUT, TATORT_PAGE_URL
+from .parser import UNKNOWN, episode_hint, parse_first_aired_year, parse_image_url, parse_page
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -93,6 +93,20 @@ class TatortCoordinator(DataUpdateCoordinator[dict[str, str]]):
                 _LOGGER.warning("Unrecognized Tatort page; retaining previous data")
                 return dict(previous)
             raise UpdateFailed("ARD returned an unrecognized Tatort page")
+        data["erstausstrahlungsjahr"] = UNKNOWN
+        if data["titel"] != UNKNOWN:
+            try:
+                episode_list = await self._fetch(EPISODE_LIST_URL)
+                data["erstausstrahlungsjahr"] = parse_first_aired_year(
+                    episode_list, data["titel"],
+                )
+            except (aiohttp.ClientError, asyncio.TimeoutError, ValueError) as err:
+                _LOGGER.warning("Tatort first broadcast lookup failed: %s", err)
+                if previous.get("titel") == data["titel"]:
+                    data["erstausstrahlungsjahr"] = previous.get(
+                        "erstausstrahlungsjahr", UNKNOWN,
+                    )
+
         asset_id = data["folgen_id"]
         if asset_id == UNKNOWN:
             data["bild_api"] = UNKNOWN
