@@ -7,6 +7,7 @@ Eine kleine Custom Integration für HACS, die die bisherige Tatort-REST-Konfigur
 - `sensor.tatort_aktuell` – `Sonntag Tatort` oder `Sonntag kein Tatort`
 - `sensor.tatort_hinweis` – `Letzter Tatort` oder `Nächster Tatort`, anhand des ARD-Ausstrahlungsdatums des hervorgehobenen Beitrags
 - `sensor.tatort_stadt`
+- `sensor.tatort_erstausstrahlungsjahr` – Jahr der (gegebenenfalls geplanten) Erstausstrahlung laut Wikipedia-Folgenliste
 - `sensor.tatort_titel`
 - `sensor.tatort_ermittler`
 - `sensor.tatort_folgen_id`
@@ -59,3 +60,18 @@ Zuerst die Integration testweise hinzufügen und die erzeugten Entity-IDs prüfe
 ## Entwicklung
 
 Die HTML- und JSON-Auswertung ist in `custom_components/tatort/parser.py` von Home Assistant entkoppelt und kann mit den Tests unter `tests/` geprüft werden.
+
+
+### Jahr der Erstausstrahlung
+
+Die Integration gleicht den Folgentitel alle sechs Stunden mit der
+[Liste der Tatort-Folgen](https://de.wikipedia.org/wiki/Liste_der_Tatort-Folgen) ab.
+Sie verwendet die dort aufgeführte Erstausstrahlung, auch bei angekündigten Folgen.
+Fehlt eine eindeutige Zuordnung, bleibt das Jahr `unbekannt`. Das Datum eines
+Trailers oder einer Wiederholung wird dafür nicht verwendet. Bei einem Abruffehler
+bleibt ein bereits ermitteltes Jahr nur für denselben Titel erhalten.
+
+Nach dem Aktualisieren der Integration Home Assistant neu starten. Beide
+Dashboard-Beispiele zeigen den neuen Sensor. Bestehende Dashboardkarten müssen
+manuell um `sensor.tatort_erstausstrahlungsjahr` ergänzt oder durch das aktualisierte
+Beispiel ersetzt werden.

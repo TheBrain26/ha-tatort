@@ -23,6 +23,12 @@ class TatortSensorDescription(SensorEntityDescription):
 
 SENSORS: tuple[TatortSensorDescription, ...] = (
     TatortSensorDescription(
+        key="erstausstrahlungsjahr",
+        name="Tatort Erstausstrahlungsjahr",
+        icon="mdi:calendar",
+        data_key="erstausstrahlungsjahr",
+    ),
+    TatortSensorDescription(
         key="aktuell",
         name="Tatort Aktuell",
         icon="mdi:pistol",

@@ -28,6 +28,8 @@ cards:
         name: Hinweis
       - entity: sensor.tatort_aktuell
         name: Status
+      - entity: sensor.tatort_erstausstrahlungsjahr
+        name: Erstausstrahlung
       - entity: sensor.tatort_stadt
         name: Stadt
       - entity: sensor.tatort_ermittler
